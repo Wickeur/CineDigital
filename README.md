@@ -1,4 +1,4 @@
-# CineDigital
+# Cinema_app
 Projet Flutter de Julian, LEULIET Quentin et Matthéo
 
 Lancer la commande "node index.js" dans le dossier cinema-api
