@@ -1,2 +1,2 @@
 # CineDigital
-Projet Flutter de Julian, Quentin et Mattéo
+Projet Flutter de Julian, Quentin et Matthéo
