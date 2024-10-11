@@ -16,7 +16,7 @@ let films = [
       type: 'Action', // Nouveau champ pour le type de film
       director: 'Réalisateur A', // Nouveau champ pour le réalisateur
       likes: 0, 
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/en/f/f9/Avengers_Endgame_poster.jpg'
+      imageUrl: 'https://media.discordapp.net/attachments/1284165108490178691/1284165276241494068/20240913_164121.jpg?ex=6709e4dc&is=6708935c&hm=6576cd688dbe2a8931fa30da094a1c9dac37aeb913bd9640250d9797a7555bcf&=&format=webp&width=1089&height=1452'
     },
     { 
       id: 2, 
@@ -25,7 +25,7 @@ let films = [
       type: 'Drame', // Nouveau champ pour le type de film
       director: 'Réalisateur B', // Nouveau champ pour le réalisateur
       likes: 0, 
-      imageUrl: 'https://upload.wikimedia.org/wikipedia/en/9/9a/The_Shawshank_Redemption_movie_poster.jpg'
+      imageUrl: 'https://m.media-amazon.com/images/I/511q7U9QnTL._AC_UF1000,1000_QL80_.jpg'
     }
 ];
 
