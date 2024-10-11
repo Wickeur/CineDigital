@@ -305,6 +305,9 @@ class FilmDetailScreen extends StatelessWidget {
           children: [
             Image.network(
               film['imageUrl'],
+              height: 300, // Limite la hauteur à 300 pixels
+              width: double.infinity,
+              fit: BoxFit.cover, // Assure que l'image couvre la largeur sans déformer l'aspect
               errorBuilder: (context, error, stackTrace) {
                 return Icon(Icons.error); // Afficher une icône en cas d'erreur
               },
