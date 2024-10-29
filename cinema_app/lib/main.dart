@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'viewmodels/film_viewmodel.dart';
 import 'views/film_list/film_list_screen.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 

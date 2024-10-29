@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/film.dart';
 
 class ApiService {
-  final String apiUrl = dotenv.env['API_URL']!;
+  final String apiUrl = "https://5126-2a01-cb0c-1099-1c00-f129-53d3-f9d9-fc65.ngrok-free.app";
 
   Future<List<Film>> fetchFilms() async {
     final response = await http.get(Uri.parse('$apiUrl/films'));
