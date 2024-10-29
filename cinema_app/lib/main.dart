@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env"); // Charger les variables
   runApp(MyApp());
 }
 
@@ -12,9 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Films au Cinéma',
       theme: ThemeData(
-        brightness: Brightness.dark, // Style sombre
-        primarySwatch: Colors.red,   // Couleurs Netflix-like
-        scaffoldBackgroundColor: Colors.black, // Arrière-plan noir
+        brightness: Brightness.dark,
+        primarySwatch: Colors.red,
+        scaffoldBackgroundColor: Colors.black,
       ),
       home: FilmListScreen(),
     );
@@ -30,6 +32,8 @@ class _FilmListScreenState extends State<FilmListScreen> {
   List films = [];
   bool isLoading = true;
 
+  final String apiUrl = dotenv.env['API_URL']!; // Utilisation de la variable API_URL
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +41,7 @@ class _FilmListScreenState extends State<FilmListScreen> {
   }
 
   Future<void> fetchFilms() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/films'));
+    final response = await http.get(Uri.parse('$apiUrl/films'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -50,10 +54,10 @@ class _FilmListScreenState extends State<FilmListScreen> {
   }
 
   Future<void> likeFilm(int id) async {
-    final response = await http.post(Uri.parse('http://localhost:3000/films/$id/like'));
+    final response = await http.post(Uri.parse('$apiUrl/films/$id/like'));
 
     if (response.statusCode == 200) {
-      fetchFilms(); // Rafraîchir les films après avoir liké
+      fetchFilms();
     } else {
       throw Exception('Échec du like');
     }
@@ -61,13 +65,13 @@ class _FilmListScreenState extends State<FilmListScreen> {
 
   Future<void> addFilm(Map<String, String> newFilm) async {
     final response = await http.post(
-      Uri.parse('http://localhost:3000/films'),
+      Uri.parse('$apiUrl/films'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(newFilm),
     );
 
     if (response.statusCode == 201) {
-      fetchFilms(); // Rafraîchir les films après l'ajout
+      fetchFilms();
     } else {
       throw Exception('Échec de l\'ajout du film');
     }
@@ -95,14 +99,14 @@ class _FilmListScreenState extends State<FilmListScreen> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0), // Padding général
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: GridView.builder(
-                padding: EdgeInsets.symmetric(vertical: 20), // Ajout d'espace en haut et en bas
+                padding: EdgeInsets.symmetric(vertical: 20),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Deux colonnes pour un meilleur aspect visuel
+                  crossAxisCount: 2,
                   crossAxisSpacing: 20,
                   mainAxisSpacing: 20,
-                  childAspectRatio: 0.65, // Format portrait plus grand pour mieux voir les images
+                  childAspectRatio: 0.65,
                 ),
                 itemCount: films.length,
                 itemBuilder: (context, index) {
@@ -117,10 +121,10 @@ class _FilmListScreenState extends State<FilmListScreen> {
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15), // Bords arrondis
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      color: Colors.black87, // Carte sombre
-                      elevation: 5, // Ombre pour séparer visuellement les cartes
+                      color: Colors.black87,
+                      elevation: 5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -128,39 +132,32 @@ class _FilmListScreenState extends State<FilmListScreen> {
                             borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                             child: Image.network(
                               films[index]['imageUrl'],
-                              height: 180, // Hauteur ajustée
+                              height: 180,
                               width: double.infinity,
                               fit: BoxFit.cover,
                               loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) {
-                                  return child;
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes!
-                                          : null,
-                                    ),
-                                  );
-                                }
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
                               },
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: Colors.grey[300], // Fond gris clair
+                                  color: Colors.grey[300],
                                   height: 180,
                                   width: double.infinity,
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    color: Colors.grey[700], // Icône en gris foncé
-                                    size: 50,
-                                  ),
+                                  child: Icon(Icons.broken_image, color: Colors.grey[700], size: 50),
                                 );
                               },
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(10.0), // Ajout de padding autour du texte
+                            padding: const EdgeInsets.all(10.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -238,33 +235,16 @@ class AddFilmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Ajouter un Film'),
-      ),
+      appBar: AppBar(title: Text('Ajouter un Film')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'Titre'),
-            ),
-            TextField(
-              controller: descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-            ),
-            TextField(
-              controller: typeController,
-              decoration: InputDecoration(labelText: 'Genre'),
-            ),
-            TextField(
-              controller: directorController,
-              decoration: InputDecoration(labelText: 'Réalisateur'),
-            ),
-            TextField(
-              controller: imageUrlController,
-              decoration: InputDecoration(labelText: 'URL de l\'image'),
-            ),
+            TextField(controller: titleController, decoration: InputDecoration(labelText: 'Titre')),
+            TextField(controller: descriptionController, decoration: InputDecoration(labelText: 'Description')),
+            TextField(controller: typeController, decoration: InputDecoration(labelText: 'Genre')),
+            TextField(controller: directorController, decoration: InputDecoration(labelText: 'Réalisateur')),
+            TextField(controller: imageUrlController, decoration: InputDecoration(labelText: 'URL de l\'image')),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -276,7 +256,7 @@ class AddFilmScreen extends StatelessWidget {
                   'imageUrl': imageUrlController.text,
                 };
                 addFilm(newFilm);
-                Navigator.pop(context); // Fermer la page après l'ajout
+                Navigator.pop(context);
               },
               child: Text('Ajouter le film'),
             ),
@@ -295,9 +275,7 @@ class FilmDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(film['title']),
-      ),
+      appBar: AppBar(title: Text(film['title'])),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -305,11 +283,11 @@ class FilmDetailScreen extends StatelessWidget {
           children: [
             Image.network(
               film['imageUrl'],
-              height: 300, // Limite la hauteur à 300 pixels
+              height: 300,
               width: double.infinity,
-              fit: BoxFit.cover, // Assure que l'image couvre la largeur sans déformer l'aspect
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Icon(Icons.error); // Afficher une icône en cas d'erreur
+                return Icon(Icons.error);
               },
             ),
             SizedBox(height: 16),
@@ -324,6 +302,8 @@ class FilmDetailScreen extends StatelessWidget {
               film['description'],
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
+            SizedBox(height: 16),
+            Text('${film['likes']} likes', style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
