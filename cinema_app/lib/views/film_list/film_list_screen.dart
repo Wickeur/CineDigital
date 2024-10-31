@@ -21,7 +21,7 @@ class FilmListScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => AddFilmScreen()),
                   );
                 },
-              )
+              ),
             ],
           ),
           body: filmViewModel.isLoading
@@ -55,27 +55,54 @@ class FilmListScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image.network(
-                                film.imageUrl,
-                                height: 150,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(Icons.broken_image, color: Colors.grey);
-                                },
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                                    child: Image.network(
+                                      film.imageUrl,
+                                      height: 150,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(Icons.broken_image, color: Colors.grey);
+                                      },
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 5,
+                                    right: 5,
+                                    child: IconButton(
+                                      icon: Icon(Icons.delete, color: Colors.red),
+                                      onPressed: () {
+                                        _showDeleteConfirmationDialog(context, filmViewModel, film.id);
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(film.title, style: TextStyle(color: Colors.white)),
+                                    Text(
+                                      film.title,
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 4),
                                     Text(film.type, style: TextStyle(color: Colors.white70)),
-                                    IconButton(
-                                      icon: Icon(Icons.thumb_up, color: Colors.red),
-                                      onPressed: () {
-                                        filmViewModel.likeFilm(film.id);
-                                      },
+                                    SizedBox(height: 8),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: IconButton(
+                                        icon: Icon(Icons.thumb_up, color: Colors.red),
+                                        onPressed: () {
+                                          filmViewModel.likeFilm(film.id);
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -87,6 +114,33 @@ class FilmListScreen extends StatelessWidget {
                     },
                   ),
                 ),
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context, FilmViewModel filmViewModel, int filmId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Supprimer le film'),
+          content: Text('Êtes-vous sûr de vouloir supprimer ce film ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () {
+                filmViewModel.deleteFilm(filmId);
+                Navigator.of(context).pop();
+              },
+              child: Text('Supprimer', style: TextStyle(color: Colors.red)),
+            ),
+          ],
         );
       },
     );

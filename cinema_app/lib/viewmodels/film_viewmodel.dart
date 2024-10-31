@@ -44,4 +44,13 @@ class FilmViewModel extends ChangeNotifier {
       // Gestion de l'erreur
     }
   }
+
+  Future<void> deleteFilm(int id) async {
+    try {
+      await _apiService.deleteFilm(id);
+      fetchFilms();
+    } catch (e) {
+      // Gestion de l'erreur
+    }
+  }
 }

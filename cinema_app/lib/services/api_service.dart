@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/film.dart';
 
 class ApiService {
-  final String apiUrl = "https://4f5c-79-174-199-110.ngrok-free.app/";
+  final String apiUrl = "https://df37-79-174-199-110.ngrok-free.app";
 
   Future<List<Film>> fetchFilms() async {
     final response = await http.get(Uri.parse('$apiUrl/films'));
@@ -18,7 +18,10 @@ class ApiService {
   }
 
   Future<void> likeFilm(int id) async {
-    final response = await http.post(Uri.parse('$apiUrl/films/$id/like'));
+    final response = await http.post(
+      Uri.parse('$apiUrl/films/$id'),
+      headers: {"Content-Type": "application/json"},
+    );
 
     if (response.statusCode != 200) {
       throw Exception('Échec du like');
@@ -34,6 +37,18 @@ class ApiService {
 
     if (response.statusCode != 201) {
       throw Exception('Échec de l\'ajout du film');
+    }
+  }
+
+  // Ajout de la méthode deleteFilm
+  Future<void> deleteFilm(int id) async {
+    final response = await http.delete(
+      Uri.parse('$apiUrl/films/$id'),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Échec de la suppression du film');
     }
   }
 }
