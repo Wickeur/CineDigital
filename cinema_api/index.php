@@ -11,6 +11,18 @@ function getAllFilms($pdo) {
     echo json_encode($films);
 }
 
+// Fonction pour récupérer un film par ID
+function getFilmById($pdo, $id) {
+    $stmt = $pdo->prepare('SELECT * FROM films WHERE id = ?');
+    $stmt->execute([$id]);
+    $film = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($film) {
+        echo json_encode($film);
+    } else {
+        echo json_encode(['error' => 'Film non trouvé']);
+    }
+}
+
 // Fonction pour ajouter un nouveau film
 function addFilm($pdo) {
     $data = json_decode(file_get_contents("php://input"), true);
@@ -24,27 +36,22 @@ function addFilm($pdo) {
 }
 
 // Fonction pour modifier un film
-function updateFilm($pdo) {
+function updateFilm($pdo, $id) {
     $data = json_decode(file_get_contents("php://input"), true);
-    if (!empty($data['id']) && !empty($data['title']) && !empty($data['description']) && !empty($data['type']) && !empty($data['director']) && !empty($data['imageUrl'])) {
+    if (!empty($data['title']) && !empty($data['description']) && !empty($data['type']) && !empty($data['director']) && !empty($data['imageUrl'])) {
         $stmt = $pdo->prepare("UPDATE films SET title = ?, description = ?, type = ?, director = ?, imageUrl = ? WHERE id = ?");
-        $stmt->execute([$data['title'], $data['description'], $data['type'], $data['director'], $data['imageUrl'], $data['id']]);
+        $stmt->execute([$data['title'], $data['description'], $data['type'], $data['director'], $data['imageUrl'], $id]);
         echo json_encode(['message' => 'Film mis à jour avec succès']);
     } else {
-        echo json_encode(['error' => 'Données incomplètes ou ID manquant']);
+        echo json_encode(['error' => 'Données incomplètes']);
     }
 }
 
 // Fonction pour supprimer un film
-function deleteFilm($pdo) {
-    $data = json_decode(file_get_contents("php://input"), true);
-    if (isset($data['id'])) {
-        $stmt = $pdo->prepare("DELETE FROM films WHERE id = ?");
-        $stmt->execute([$data['id']]);
-        echo json_encode(['message' => 'Film supprimé avec succès']);
-    } else {
-        echo json_encode(['error' => 'ID non fourni']);
-    }
+function deleteFilm($pdo, $id) {
+    $stmt = $pdo->prepare("DELETE FROM films WHERE id = ?");
+    $stmt->execute([$id]);
+    echo json_encode(['message' => 'Film supprimé avec succès']);
 }
 
 // Fonction pour ajouter un like à un film
@@ -60,32 +67,46 @@ function likeFilm($pdo, $id) {
 
 // Gestion des routes
 $requestMethod = $_SERVER['REQUEST_METHOD'];
-$id = isset($_GET['id']) ? intval($_GET['id']) : null;
+$requestUri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
+$id = isset($requestUri[2]) ? intval($requestUri[2]) : null; // Supposons que l'ID est passé dans l'URL
 
 switch ($requestMethod) {
     case 'GET':
-        if ($id === null) {
-            getAllFilms($pdo);
+        if (isset($requestUri[1]) && $requestUri[1] === 'films') {
+            if ($id === null) {
+                getAllFilms($pdo);
+            } else {
+                getFilmById($pdo, $id);
+            }
         } else {
-            // Ici, vous pourriez également ajouter une fonction pour récupérer un film par ID
-            echo json_encode(['error' => 'Méthode non autorisée pour récupérer un film par ID']);
+            echo json_encode(['error' => 'Route non trouvée']);
         }
         break;
 
     case 'POST':
-        if ($id === null) {
+        if (isset($requestUri[1]) && $requestUri[1] === 'films') {
             addFilm($pdo);
-        } else {
+        } elseif (isset($requestUri[1]) && $requestUri[1] === 'films' && $id !== null) {
             likeFilm($pdo, $id);
+        } else {
+            echo json_encode(['error' => 'Route non trouvée']);
         }
         break;
 
     case 'PUT':
-        updateFilm($pdo);
+        if (isset($requestUri[1]) && $requestUri[1] === 'films' && $id !== null) {
+            updateFilm($pdo, $id);
+        } else {
+            echo json_encode(['error' => 'Route non trouvée']);
+        }
         break;
 
     case 'DELETE':
-        deleteFilm($pdo);
+        if (isset($requestUri[1]) && $requestUri[1] === 'films' && $id !== null) {
+            deleteFilm($pdo, $id);
+        } else {
+            echo json_encode(['error' => 'Route non trouvée']);
+        }
         break;
 
     default:
