@@ -1,4 +1,4 @@
-# Cinema_app
+# Cine Digital
 Projet Flutter de WICKE Julian, LEULIET Quentin et FALCKE Matthéo 
 
 ## Démarche l'api
