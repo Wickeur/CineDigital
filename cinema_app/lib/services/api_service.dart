@@ -6,6 +6,7 @@ import '../models/film.dart';
 class ApiService {
   final String apiUrl = "https://df37-79-174-199-110.ngrok-free.app";
 
+  // Récupérer tous les films
   Future<List<Film>> fetchFilms() async {
     final response = await http.get(Uri.parse('$apiUrl/films'));
 
@@ -17,6 +18,7 @@ class ApiService {
     }
   }
 
+  // Récupérer un film par ID
   Future<Film> fetchFilmById(int id) async {
     final response = await http.get(Uri.parse('$apiUrl/films/$id'));
 
@@ -27,6 +29,7 @@ class ApiService {
     }
   }
 
+  // Liker un film
   Future<void> likeFilm(int id) async {
     final response = await http.post(
       Uri.parse('$apiUrl/films/$id'),
@@ -38,19 +41,45 @@ class ApiService {
     }
   }
 
+  // Ajouter un film
   Future<void> addFilm(Film newFilm) async {
     final response = await http.post(
       Uri.parse('$apiUrl/films'),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode(newFilm.toJson()),
+      body: jsonEncode({
+        'title': newFilm.title,
+        'description': newFilm.description,
+        'type': newFilm.type,
+        'director': newFilm.director,
+        'imageUrl': newFilm.imageUrl,
+      }),
     );
 
-    if (response.statusCode != 201) {
+    if (response.statusCode != 200) {
       throw Exception('Échec de l\'ajout du film. Statut: ${response.statusCode}');
     }
   }
 
-  // Ajout de la méthode deleteFilm
+  // Mettre à jour un film
+  Future<void> updateFilm(int id, Film updatedFilm) async {
+    final response = await http.put(
+      Uri.parse('$apiUrl/films/$id'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        'title': updatedFilm.title,
+        'description': updatedFilm.description,
+        'type': updatedFilm.type,
+        'director': updatedFilm.director,
+        'imageUrl': updatedFilm.imageUrl,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Échec de la mise à jour du film. Statut: ${response.statusCode}');
+    }
+  }
+
+  // Supprimer un film
   Future<void> deleteFilm(int id) async {
     final response = await http.delete(
       Uri.parse('$apiUrl/films/$id'),
