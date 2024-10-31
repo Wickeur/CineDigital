@@ -1,5 +1,5 @@
 # Cinema_app
-Projet Flutter de Julian, LEULIET Quentin et Matthéo
+Projet Flutter de WICKE Julian, LEULIET Quentin et FALCKE Matthéo 
 
 ## Démarche l'api
 Dans le dossier cinema_api, suivre les étapes suivantes:
@@ -10,11 +10,13 @@ Dans le dossier cinema_api, suivre les étapes suivantes:
 
 * Démarrer le serveur 
 ```
+cd cinema_api
 php -S localhost:3000
 ```
 
 ## Démarche de l'application
 Dans le dossier cinema_app, lancer la commande suivante
 ```
+cd cinema_app
 flutter run
 ```
