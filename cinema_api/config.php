@@ -1,10 +1,9 @@
 <?php
-// config.php
 
-$host = 'localhost';
-$db = 'cinedigital_db';
-$user = 'root'; 
-$pass = ''; 
+$host = 'db'; 
+$db = 'cineDigitalDB'; 
+$user = 'user';
+$pass = 'userpassword';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
