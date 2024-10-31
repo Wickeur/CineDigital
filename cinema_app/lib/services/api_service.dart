@@ -13,7 +13,17 @@ class ApiService {
       List jsonResponse = json.decode(response.body);
       return jsonResponse.map((film) => Film.fromJson(film)).toList();
     } else {
-      throw Exception('Échec de la récupération des films');
+      throw Exception('Échec de la récupération des films. Statut: ${response.statusCode}');
+    }
+  }
+
+  Future<Film> fetchFilmById(int id) async {
+    final response = await http.get(Uri.parse('$apiUrl/films/$id'));
+
+    if (response.statusCode == 200) {
+      return Film.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Film non trouvé. Statut: ${response.statusCode}');
     }
   }
 
@@ -24,7 +34,7 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Échec du like');
+      throw Exception('Échec du like. Statut: ${response.statusCode}');
     }
   }
 
@@ -36,7 +46,7 @@ class ApiService {
     );
 
     if (response.statusCode != 201) {
-      throw Exception('Échec de l\'ajout du film');
+      throw Exception('Échec de l\'ajout du film. Statut: ${response.statusCode}');
     }
   }
 
@@ -48,7 +58,7 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Échec de la suppression du film');
+      throw Exception('Échec de la suppression du film. Statut: ${response.statusCode}');
     }
   }
 }
