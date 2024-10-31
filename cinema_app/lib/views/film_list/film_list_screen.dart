@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/film_viewmodel.dart';
 import '../add_film/add_film_screen.dart';
+import '../edit_film/edit_film_screen.dart';
 import '../film_detail/film_detail_screen.dart';
 
 class FilmListScreen extends StatelessWidget {
@@ -95,9 +96,21 @@ class FilmListScreen extends StatelessWidget {
                                         ),
                                         // Affichage du nombre de likes juste à côté
                                         Text(
-                                          film.likes
-                                              .toString(), // Assurez-vous que l'attribut 'likes' existe dans la classe Film
+                                          film.likes.toString(),
                                           style: TextStyle(color: Colors.white),
+                                        ),
+                                        Spacer(),
+                                        // Bouton d'édition
+                                        IconButton(
+                                          icon: Icon(Icons.edit, color: Colors.yellow),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditFilmScreen(film: film),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),

@@ -45,6 +45,20 @@ class FilmViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> updateFilm(Film updatedFilm) async {
+    try {
+      await _apiService.updateFilm(updatedFilm.id, updatedFilm);
+      // Mettre à jour la liste des films
+      int index = _films.indexWhere((film) => film.id == updatedFilm.id);
+      if (index != -1) {
+        _films[index] = updatedFilm;
+      }
+      notifyListeners();
+    } catch (e) {
+      // Gestion de l'erreur
+    }
+  }
+
   Future<void> deleteFilm(int id) async {
     try {
       await _apiService.deleteFilm(id);
