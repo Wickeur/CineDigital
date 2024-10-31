@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/film.dart';
 
 class ApiService {
-  final String apiUrl = "https://5126-2a01-cb0c-1099-1c00-f129-53d3-f9d9-fc65.ngrok-free.app";
+  final String apiUrl = "https://4f5c-79-174-199-110.ngrok-free.app/";
 
   Future<List<Film>> fetchFilms() async {
     final response = await http.get(Uri.parse('$apiUrl/films'));
